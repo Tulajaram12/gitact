@@ -96,7 +96,7 @@ jobs:
       # ---------------- UPDATE VALUES.YAML ----------------
       - name: Update Helm values.yaml Image Tag
         run: |
-          cd helmact/sample-app
+          cd helmact
 
           sed -i "s|tag:.*|tag: \"$IMAGE_TAG\"|g" values.yaml
 
