@@ -78,7 +78,7 @@ jobs:
       # ---------------- BUILD IMAGE ----------------
       - name: Build Docker Image
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
       # ---------------- TRIVY IMAGE SCAN ----------------
       - name: Trivy Docker Image Scan
