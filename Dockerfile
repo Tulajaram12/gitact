@@ -1,24 +1,31 @@
-# -------------------------
-# 1. Builder stage (normal OS)
-# -------------------------
-FROM python:3.11-slim-bookworm AS builder
+FROM python:3.11-slim-bookworm
 
 WORKDIR /app
 
+# 1. System security patching (IMPORTANT)
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    libncursesw6 libtinfo6 ncurses-base ncurses-bin && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. Upgrade pip tooling FIRST (important for CVEs like wheel)
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# 3. Copy dependencies first (better caching)
 COPY requirements.txt .
 
+# 4. Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 5. Force fix known vulnerable python build deps
+RUN pip install --no-cache-dir --upgrade wheel jaraco.context
 
-# -------------------------
-# 2. Runtime stage (distroless)
-# -------------------------
-FROM gcr.io/distroless/python3-debian12
-
-WORKDIR /app
-
-COPY --from=builder /usr/local/lib/python3.11 /usr/local/lib/python3.11
-COPY --from=builder /usr/local/bin /usr/local/bin
+# 6. Copy application
 COPY . .
 
-ENTRYPOINT ["python", "main.py"]
+# 7. Runtime config
+ENV PYTHONPATH=/app
+
+EXPOSE 5000
+
+CMD ["python", "app/main.py"]
