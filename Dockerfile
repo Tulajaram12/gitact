@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm
+FROM gcr.io/distroless/python3-debian12
 
 WORKDIR /app
 
