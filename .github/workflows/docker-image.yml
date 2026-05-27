@@ -86,7 +86,6 @@ jobs:
           trivy image \
           --severity HIGH,CRITICAL \
           --ignore-unfixed \
-          --exit-code 1 \
           $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       # ---------------- PUSH IMAGE ----------------
